@@ -24,50 +24,77 @@ const dropArea = document.getElementById('drop-area');
 const fileInput = document.getElementById('imagen');
 const preview = document.getElementById('preview');
 
-// Click en la zona para abrir selector
-dropArea.addEventListener('click', () => fileInput.click());
+if (dropArea && fileInput && preview) {
+    // Drag events
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.classList.add('hover');
+        });
+    });
 
-// Drag events
-['dragenter', 'dragover'].forEach(eventName => {
-    dropArea.addEventListener(eventName, (e) => {
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropArea.classList.remove('hover');
+        });
+    });
+
+    // Drop event
+    dropArea.addEventListener('drop', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        dropArea.classList.add('hover');
+
+        const dt = e.dataTransfer;
+        if (!dt) return;
+
+        const files = Array.from(dt.files || []);
+        if (!files.length) return;
+
+        // Limitar número de archivos
+        const finalFiles = files.slice(0, 1);
+
+        // Crear un DataTransfer para asignar al input
+        const dataTransfer = new DataTransfer();
+        finalFiles.forEach(f => dataTransfer.items.add(f));
+        fileInput.files = dataTransfer.files; // <-- aquí actualizamos el input
+
+        // Disparamos el evento change por si otros listeners lo esperan
+        const event = new Event('change', { bubbles: true });
+        fileInput.dispatchEvent(event);
+
+        // Mostramos preview
+        handleFiles(fileInput.files);
     });
-});
 
-['dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        dropArea.classList.remove('hover');
+    // Input file change
+    fileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        handleFiles(files);
+        blockDeleter();
     });
-});
 
-// Drop event
-dropArea.addEventListener('drop', (e) => {
-    const dt = e.dataTransfer;
-    const files = dt.files;
-    handleFiles(files);
-});
+    // Función para manejar archivos
+    function handleFiles(files) {
+        if (!files || files.length === 0) return;
 
-// Input file change
-fileInput.addEventListener('change', (e) => {
-    const files = e.target.files;
-    handleFiles(files);
-});
+        preview.innerHTML = ''; // limpiar preview anterior
 
-// Función para manejar archivos
-function handleFiles(files) {
-    if (!files || files.length === 0) return;
+        Array.from(files).forEach(file => {
+            if (!file.type.startsWith('image/')) return;
 
-    preview.innerHTML = ''; // limpiar preview anterior
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(file);
+            preview.appendChild(img);
+        });
+    }
 
-    Array.from(files).forEach(file => {
-        if (!file.type.startsWith('image/')) return;
-
-        const img = document.createElement('img');
-        img.src = URL.createObjectURL(file);
-        preview.appendChild(img);
-    });
+    function blockDeleter() {
+        const checks = document.getElementById('deleteimage');
+        if (!checks) return;
+        checks.setAttribute('disabled', '');
+        checks.checked = true;
+    }
 }

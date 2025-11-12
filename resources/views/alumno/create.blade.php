@@ -23,12 +23,12 @@
     <label for="habilidades">Habilidades:</label>
     <textarea id="habilidades" name="habilidades" class="form-control" rows="2" maxlength="500" placeholder="Ej: Comunicación, liderazgo, trabajo en equipo...">{{ old('habilidades') }}</textarea>
     <label for="imagen">Habilidades:</label>
-    <div id="drop-area">
+    <label id="drop-area">
         <p>Arrastra y suelta tu imagen aquí</p>
         <p>o haz clic para seleccionar</p>
         <input id="imagen" type="file" name="imagen" class="form-control" accept="image/*">
         <div id="preview"></div>
-    </div>
+    </label>
     <input type="submit" value="Create new post" class="btn btn-primary">
 </form>
 @endsection

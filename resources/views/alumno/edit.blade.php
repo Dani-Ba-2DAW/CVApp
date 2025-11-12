@@ -22,28 +22,18 @@
     <input id="formacion" type="text" name="formacion" class="form-control" maxlength="255" placeholder="Ej: Grado en Ingeniería Informática" value="{{ old('formacion', $alumno->formacion) }}">
     <label for="habilidades">Habilidades:</label>
     <textarea id="habilidades" name="habilidades" class="form-control" rows="2" maxlength="500" placeholder="Ej: Comunicación, liderazgo, trabajo en equipo...">{{ old('habilidades', $alumno->habilidades) }}</textarea>
-    <div id="drop-area">
+    <label id="drop-area">
         <p>Arrastra y suelta tu imagen aquí</p>
         <p>o haz clic para seleccionar</p>
         <input id="imagen" type="file" name="imagen" class="form-control" accept="image/*">
         <div id="preview">
             <img src="{{ route('image.view', $alumno->id) }}">
         </div>
-    </div>
+    </label>
     <div class="form-check form-switch">
         <input class="form-check-input" type="checkbox" role="switch" id="deleteimage" name="deleteimage" value="delete">
         <label class="form-check-label" for="deleteimage">Delete image</label>
     </div>
     <input type="submit" value="Edit post" class="btn btn-primary">
 </form>
-@endsection
-
-@section('scripts')
-<script>
-    function blockDeleter() {
-        const checks = document.getElementById('deleteimage');
-        checks.setAttribute('disabled', '');
-        checks.checked = true;
-    }
-</script>
 @endsection
