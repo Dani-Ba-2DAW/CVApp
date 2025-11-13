@@ -33,22 +33,22 @@ class AlumnoController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:50',
+            'apellidos' => 'required|string|min:2|max:80',
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'required|email|min:6|max:100|unique:alumnos,correo',
+            'fecha_nacimiento' => 'nullable|date',
+            'nota_media' => 'nullable|numeric|max:10',
+            'experiencia' => 'nullable|string|max:1000',
+            'formacion' => 'nullable|string|max:255',
+            'habilidades' => 'nullable|string|max:500',
+            'fotografia' => 'nullable|image|max:2048'
+        ]);
         $result = false;
         $message = ['general' => 'El alumno ha sido añadido correctamente.'];
         $alumno = new Alumno($request->all()); // Guardamos los datos en la clase
         try {
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:50',
-                'apellidos' => 'required|string|min:2|max:80',
-                'telefono' => 'nullable|string|max:20',
-                'correo' => 'required|email|min:6|max:100|unique:alumnos,correo',
-                'fecha_nacimiento' => 'nullable|date',
-                'nota_media' => 'nullable|numeric|max:10',
-                'experiencia' => 'nullable|string|max:1000',
-                'formacion' => 'nullable|string|max:255',
-                'habilidades' => 'nullable|string|max:500',
-                'fotografia' => 'nullable|image|max:2048'
-            ]);
             $result = $alumno->save();
             $fotografia = $this->upload($request, $alumno->id);
             if ($fotografia != null) {
@@ -84,21 +84,21 @@ class AlumnoController extends Controller
      */
     public function update(Request $request, Alumno $alumno): RedirectResponse
     {
+        $request->validate([
+            'nombre' => 'required|string|min:2|max:50',
+            'apellidos' => 'required|string|min:2|max:80',
+            'telefono' => 'nullable|string|max:20',
+            'correo' => 'required|email|min:6|max:100|unique:alumnos,correo,' . $alumno->id,
+            'fecha_nacimiento' => 'nullable|date',
+            'nota_media' => 'nullable|numeric|max:10',
+            'experiencia' => 'nullable|string|max:1000',
+            'formacion' => 'nullable|string|max:255',
+            'habilidades' => 'nullable|string|max:500',
+            'fotografia' => 'nullable|image|max:2048'
+        ]);
         $result = false;
         $message = ['general' => 'El alumno ha sido modificado correctamente.'];
         try {
-            $request->validate([
-                'nombre' => 'required|string|min:2|max:50',
-                'apellidos' => 'required|string|min:2|max:80',
-                'telefono' => 'nullable|string|max:20',
-                'correo' => 'required|email|min:6|max:100|unique:alumnos,correo,' . $alumno->id,
-                'fecha_nacimiento' => 'nullable|date',
-                'nota_media' => 'nullable|numeric|max:10',
-                'experiencia' => 'nullable|string|max:1000',
-                'formacion' => 'nullable|string|max:255',
-                'habilidades' => 'nullable|string|max:500',
-                'fotografia' => 'nullable|image|max:2048'
-            ]);
             if ($request->deleteimage == 'delete') {
                 $this->destroyImage(storage_path('app/private') . '/' . $alumno->fotografia);
             }
